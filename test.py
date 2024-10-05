@@ -6,6 +6,7 @@ import postprocess
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics import classification_report
+from sklearn.preprocessing import MultiLabelBinarizer
 
 # loads the data and one hot encode the appropriate labels
 dat = data.load_data()

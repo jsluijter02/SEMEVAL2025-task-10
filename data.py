@@ -55,3 +55,13 @@ def load_data():
 # print(value)
 # print(type(value))
 # print(len(value))
+
+df = load_data()
+dom_mlb, sub_mlb, dom_narr_enc, sub_narr_enc = encode_labels(df)
+
+print(dom_mlb.classes_) 
+# sub narr classes zijn gewoon de URW: dom: sub
+# split ":"? 
+# misschien map maken en dan in op kunnen zoeken?
+##hoe omzetten van ypred naar labels naar dom narrs?
+
