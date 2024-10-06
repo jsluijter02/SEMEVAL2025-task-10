@@ -24,7 +24,9 @@ y = sub_narr_enc
 # X = vectorizer.fit_transform(X)
 
 #divide the data into train and test splits, small test size, cause little train data
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.1)
+X_train, X_test, y_train, y_test, id_train, id_test = train_test_split(X, y, dat["id"], test_size = 0.1)
+print(id_test)
+print(X_train)
 # print(y_train.shape)
 # print(y_test.shape)
 
@@ -40,3 +42,4 @@ print("TEST Y:", y_test)
 print(classification_report(y_test, y_pred, target_names=sub_mlb.classes_))
 
 #hierna nog dus de post processing dat het in een txt file gezet wordt hoe semeval hem wil hebben
+postprocess.save_predictions(y_pred,sub_mlb,id_test)

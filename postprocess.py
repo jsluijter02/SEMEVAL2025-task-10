@@ -1,14 +1,24 @@
 # puts the predicted y's back into the text file with the ids
 from datetime import datetime
 from sklearn.preprocessing import MultiLabelBinarizer
+import os
 
-# def save_predictions(df, y_pred, sub_mlb):
-#     # opens a new predictions file with the current date and time
-#     date = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
-#     narr_dict = narrative_dictionary(sub_mlb)
-#     y_pred_dom, y_pred_sub = narr_predictions()
-#     ##hoe nu id?
-#     with open(f"predictions/{date}", 'w') as f:
+def save_predictions(y_pred, sub_mlb, ids):
+    # opens a new predictions file with the current date and time
+    # change to f1 score later, so we can see which predictions are the best!!!
+    date = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    narr_dict = narrative_dictionary(sub_mlb)
+    y_pred_dom, y_pred_sub = narr_predictions(y_pred, narr_dict, sub_mlb)
+    
+    file_path = os.path.join("./predictions",f"{date}.txt")
+    with open(file_path, 'w') as f:
+        for i in range(len(ids)):
+            dom_narrs = ";".join(y_pred_dom[i])
+            sub_narrs = ";".join(y_pred_sub[i])
+            id = ids.iloc[i]
+
+            f.write(f"{id}\t{dom_narrs}\t{sub_narrs}\n")
+    
         
 
 def narrative_dictionary(sub_mlb = MultiLabelBinarizer):
