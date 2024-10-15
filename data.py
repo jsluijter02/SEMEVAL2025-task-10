@@ -21,11 +21,16 @@ def load_labels(file_path):
     labels = []
     with open(file_path, "r") as f:
         for line in f:
-            tags = line.split("\t")
-            for i in range(1,len(tags)):
-                tags[i] = tags[i].replace("\n","").split(";")
-            labels.append({"id":tags[0],"dom_narr": tags[1], "sub_narr": tags[2]})
+            tags = line.strip().split("\t")
+            
+            text_id = tags[0].strip()
+            # print(text_id)
+            dom_narrs = [narr.strip() for narr in tags[1].split(";")]
+            sub_narrs = [narr.strip() for narr in tags[2].split(";")]
+
+            labels.append({"id":text_id,"dom_narr": dom_narrs, "sub_narr": sub_narrs})
     df = pd.DataFrame(labels)
+    #print(labels)
     return df
 
 # one-hot encodes the dominant- and sub-narrative labels              
@@ -36,7 +41,7 @@ def encode_labels(df):
     dom_narr_enc = dom_mlb.fit_transform(df["dom_narr"])
     #print("dominant narratives: ", (dom_mlb.classes_))
     sub_narr_enc = sub_mlb.fit_transform(df["sub_narr"])
-    print("sub-narratives: ", (sub_mlb.classes_))
+    #print("sub-narratives: ", (sub_mlb.classes_))
     
     return dom_mlb, sub_mlb, dom_narr_enc, sub_narr_enc
 
@@ -56,10 +61,10 @@ def load_data():
 # print(type(value))
 # print(len(value))
 
-df = load_data()
-dom_mlb, sub_mlb, dom_narr_enc, sub_narr_enc = encode_labels(df)
+# df = load_data()
+# dom_mlb, sub_mlb, dom_narr_enc, sub_narr_enc = encode_labels(df)
 
-print(dom_mlb.classes_) 
+# print(dom_mlb.classes_) 
 # sub narr classes zijn gewoon de URW: dom: sub
 # split ":"? 
 # misschien map maken en dan in op kunnen zoeken?
