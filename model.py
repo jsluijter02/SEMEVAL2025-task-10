@@ -15,10 +15,7 @@ def logistic_regression_classifier(X_train, y_train, X_test):
 #y_train = np array, find the most frequent label ("other")
 def majority_classifier(y_train, X_test): 
     # finds most common label, converts numpy array to tuple, counts which tuple most frequent 
-    y_tuples = [tuple(y) for y in y_train]
-    max_y = Counter(y_tuples).most_common(1)
-    max_y = np.array(max_y[0][0])
-    print(X_test.shape[0])
+    max_y = find_majority(y_train)
     #print(X_test)
     #print(max_y)
     #print(type(max_y))
@@ -27,8 +24,14 @@ def majority_classifier(y_train, X_test):
     print(y_pred)
     return y_pred
 
+def find_majority(y_train):
+    y_tuples = [tuple(y) for y in y_train]
+    max_y = Counter(y_tuples).most_common(1)
+    max_y = np.array(max_y[0][0])
+    return max_y
+
 # Does the logistic regression n times, as the data set is quite small
-def logistic_regression_loocv(X, y):
+def logistic_regression_loocv(X, y, majority_ensemble = False):
     # initialize the cross validation
     cv = LeaveOneOut()
     cv.get_n_splits(X)
@@ -36,6 +39,9 @@ def logistic_regression_loocv(X, y):
     # output arrays of the predicted label for that instance of y and the true label, so we can evaluate it later
     labels_pred = []
     labels_true = []
+
+    # Most common label = Other
+    max_y = find_majority(y)
 
     for i, (train_index, test_index) in enumerate(cv.split(X)):
         # Get the train and test instances for this fold
@@ -51,13 +57,17 @@ def logistic_regression_loocv(X, y):
             continue
         
         # If not invalid, train the classifier
-        lr = MultiOutputClassifier(LogisticRegression(class_weight="balanced", solver= "liblinear", max_iter=10000))
+        lr = MultiOutputClassifier(LogisticRegression(class_weight= "balanced", solver="liblinear", max_iter=100, penalty="l2")) #, penalty="l1" class_weight="balanced",
         lr.fit(X_train,y_train)
         # print(X_train)
         # print(y_train)
 
         # Make prediction for the test instance
         y_pred = lr.predict(X_test)
+
+        if(majority_ensemble):
+            if np.all(y_pred == 0):
+                y_pred = max_y
 
         labels_pred.append(y_pred)
         labels_true.append(y_test)
@@ -70,3 +80,4 @@ def logistic_regression_loocv(X, y):
 
     return labels_pred, labels_true
     
+

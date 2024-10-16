@@ -3,6 +3,7 @@ import model
 import eval
 import postprocess
 import numpy as np
+import pandas as pd
 #misschien kan ik dit beter in een notebook doen?
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -39,8 +40,9 @@ Xtf = vectorizer.fit_transform(X)
 # # # have the model predict the test set
 # y_pred = model.majority_classifier(y_train, X_test)
 # print(y_train)
-y_pred, y_true = model.logistic_regression_loocv(Xtf,y)
-# print("Pred Y:", y_pred)
+y_pred, y_true = model.logistic_regression_loocv(Xtf,y,majority_ensemble=True)
+print("Pred Y:", y_pred)
+pd.DataFrame(y_pred).to_csv("./test.csv")
 # print("True Y:", y_test)
 
 # # # #evaluate the predictions
