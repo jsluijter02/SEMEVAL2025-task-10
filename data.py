@@ -12,6 +12,7 @@ def load_text_data(directory):
         with open(file_path, 'r') as f:
             raw_text = f.read()
             data.append({"id":file, "text": raw_text})
+    print("Data length: ", len(data))
     df = pd.DataFrame(data)
     return df
 
@@ -29,6 +30,7 @@ def load_labels(file_path):
             sub_narrs = [narr.strip() for narr in tags[2].split(";")]
 
             labels.append({"id":text_id,"dom_narr": dom_narrs, "sub_narr": sub_narrs})
+    print("Labels length:", len(labels))
     df = pd.DataFrame(labels)
     #print(labels)
     return df
@@ -48,8 +50,8 @@ def encode_labels(df):
 
 # function for the whole thing
 def load_data():
-    df_text = load_text_data("/Users/jochem/Documents/school/Uni KI jaar 4/Scriptie/Train Data/training_data_11_September_release/EN/raw-documents")
-    df_labels = load_labels("/Users/jochem/Documents/school/Uni KI jaar 4/Scriptie/Train Data/training_data_11_September_release/EN/subtask-2-annotations.txt")
+    df_text = load_text_data("/Users/jochem/Documents/school/Uni KI jaar 4/Scriptie/Train Data/training_data_16_October_release/EN/raw-documents")
+    df_labels = load_labels("/Users/jochem/Documents/school/Uni KI jaar 4/Scriptie/Train Data/training_data_16_October_release/EN/subtask-2-annotations.txt")
     df_merged = pd.merge(df_text, df_labels, on="id")
     #df_merged.to_clipboard()
     return df_merged
