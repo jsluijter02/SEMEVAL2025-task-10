@@ -20,7 +20,6 @@ def save_predictions(y_pred, sub_mlb, ids):
             f.write(f"{id}\t{dom_narrs}\t{sub_narrs}\n")
     
         
-
 def narrative_dictionary(sub_mlb = MultiLabelBinarizer):
     # first create the mapping from sub- to dominant narratives
     narr_dict = {}

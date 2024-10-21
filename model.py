@@ -4,7 +4,6 @@ from sklearn.model_selection import LeaveOneOut
 from collections import Counter
 import numpy as np
 
-# does not yet work, because of multiclass multilabel data
 def logistic_regression_classifier(X_train, y_train, X_test):
     lr = MultiOutputClassifier(LogisticRegression(class_weight="balanced", solver= "liblinear", max_iter=10000))
     lr.fit(X_train, y_train)
@@ -16,9 +15,7 @@ def logistic_regression_classifier(X_train, y_train, X_test):
 def majority_classifier(y_train, X_test): 
     # finds most common label, converts numpy array to tuple, counts which tuple most frequent 
     max_y = find_majority(y_train)
-    #print(X_test)
-    #print(max_y)
-    #print(type(max_y))
+
     # now prediction: all X's are the most frequently occurring y
     y_pred = np.tile(max_y, (X_test.shape[0],1))
     print(y_pred)
@@ -57,10 +54,8 @@ def logistic_regression_loocv(X, y, majority_ensemble = False):
             continue
         
         # If not invalid, train the classifier
-        lr = MultiOutputClassifier(LogisticRegression(class_weight= "balanced", solver="liblinear", max_iter=100, penalty="l2")) #, penalty="l1" class_weight="balanced",
+        lr = MultiOutputClassifier(LogisticRegression(class_weight= "balanced", solver="liblinear", max_iter=100, penalty="l2"))
         lr.fit(X_train,y_train)
-        # print(X_train)
-        # print(y_train)
 
         # Make prediction for the test instance
         y_pred = lr.predict(X_test)
