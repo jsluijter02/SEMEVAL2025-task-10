@@ -1,6 +1,7 @@
 from sklearn.feature_extraction.text import TfidfVectorizer
 import pandas as pd
 from sklearn.preprocessing import MultiLabelBinarizer
+from deep_translator import GoogleTranslator
 
 #raw text preprocessing steps
 def tf_idf_vectorize(X):
@@ -8,9 +9,24 @@ def tf_idf_vectorize(X):
     Xtf = vec.fit_transform(X)
     return Xtf
 
-def translate():
+# function using google translate to translate the non-english texts into english
+# if the text is too long, we chunk it,
+# translate the chunk,
+# and recombine the chunk into a single string
+# it takes long probabl, but at least this is free
+# https://github.com/nidhaloff/deep-translator
+def translate(df, source_lang):
     target_lang = "en"
+    translator = GoogleTranslator(source=source_lang, target=target_lang)
 
+    # get the texts to translate
+    df["text"] = df["text"].apply(...)
+
+    #return df
+
+def chunk(text):
+    ...
+def translate_chunk(text):
     ...
 
 def embed(X):

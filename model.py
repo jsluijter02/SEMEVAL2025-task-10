@@ -11,7 +11,7 @@ def logistic_regression_classifier(X_train, y_train, X_test):
     y_pred = lr.predict(X_test)
     return y_pred
 
-#y_train = np array, find the most frequent label ("other")
+# y_train = np array, find the most frequent label ("other")
 def majority_classifier(y_train, X_test): 
     # finds most common label, converts numpy array to tuple, counts which tuple most frequent 
     max_y = find_majority(y_train)
@@ -21,13 +21,14 @@ def majority_classifier(y_train, X_test):
     print(y_pred)
     return y_pred
 
+# function used by the majority classifier and the logistic regression with LOOCV to find the most commonly occuring label in a data set
 def find_majority(y_train):
     y_tuples = [tuple(y) for y in y_train]
     max_y = Counter(y_tuples).most_common(1)
     max_y = np.array(max_y[0][0])
     return max_y
 
-# Does the logistic regression n times, as the data set is quite small
+# Does the logistic regression n times, if the data set is quite small
 def logistic_regression_loocv(X, y, majority_ensemble = False):
     # initialize the cross validation
     cv = LeaveOneOut()
