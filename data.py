@@ -1,16 +1,37 @@
 import os
 import pandas as pd
+from deep_translator import GoogleTranslator
 
 # loads all text files from the directory into a single dataframe
 # id = file name (string)
 # text = files contents (string)
-def load_text_data(directory):
+def load_text_data(directory, translate: bool = False, source_lang = "auto"):
     data = []
+
+    # initialize the translator for if we need to translate
+    target_lang = "en"
+    translator = GoogleTranslator(source=source_lang, target=target_lang)
+
     for file in os.listdir(directory):
         file_path = os.path.join(directory,file)
-        with open(file_path, 'r') as f:
-            raw_text = f.read()
-            data.append({"id":file, "text": raw_text})
+
+        # translator translates the file and appends that to the dataframe
+        if translate:
+            try:
+                text = translator.translate_file(file_path)
+                data.append({"id":file, "text": text})
+            except Exception as e:
+                print(f"Error while reading:{file}")
+            continue
+        
+        # when we dont need to translate, the file is saved as is
+        try:
+            with open(file_path, 'r') as f:
+                text = f.read()
+                data.append({"id":file, "text": text})
+        except Exception as e:
+            print(f"Error while reading:{file}")
+
     print("Data length: ", len(data))
     df = pd.DataFrame(data)
     return df

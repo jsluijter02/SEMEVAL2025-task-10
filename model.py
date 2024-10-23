@@ -29,7 +29,7 @@ def find_majority(y_train):
     return max_y
 
 # Does the logistic regression n times, if the data set is quite small
-def logistic_regression_loocv(X, y, majority_ensemble = False):
+def logistic_regression_loocv(X, y, majority_ensemble = False, penalty ="l2", solver="liblinear", max_iter = 100):
     # initialize the cross validation
     cv = LeaveOneOut()
     cv.get_n_splits(X)
@@ -55,7 +55,7 @@ def logistic_regression_loocv(X, y, majority_ensemble = False):
             continue
         
         # If not invalid, train the classifier
-        lr = MultiOutputClassifier(LogisticRegression(class_weight= "balanced", solver="liblinear", max_iter=100, penalty="l2"))
+        lr = MultiOutputClassifier(LogisticRegression(class_weight="balanced", solver=solver, max_iter=max_iter, penalty=penalty))
         lr.fit(X_train,y_train)
 
         # Make prediction for the test instance
@@ -71,8 +71,8 @@ def logistic_regression_loocv(X, y, majority_ensemble = False):
     # good format for classification report
     labels_pred = np.vstack(labels_pred)
     labels_true = np.vstack(labels_true)
-    print("Predicted Labels: ", labels_pred)
-    print("True Labels: ", labels_true)
+    # print("Predicted Labels: ", labels_pred)
+    # print("True Labels: ", labels_true)
 
     return labels_pred, labels_true
     
