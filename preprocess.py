@@ -22,11 +22,9 @@ def encode_labels(df):
     sub_mlb = MultiLabelBinarizer()
 
     dom_narr_enc = dom_mlb.fit_transform(df["dom_narr"])
-    dom_df = pd.concat([df["id"], pd.DataFrame(dom_narr_enc, columns=dom_mlb.classes_)], axis=1)
+    df = pd.concat([df, pd.DataFrame(dom_narr_enc, columns=dom_mlb.classes_)], axis=1)
 
     sub_narr_enc = sub_mlb.fit_transform(df["sub_narr"])
-    sub_df = pd.concat([df["id"], pd.DataFrame(sub_narr_enc, columns=sub_mlb.classes_)], axis=1)
-
-    narr_df = pd.merge(dom_df,sub_df,on="id")
+    df = pd.concat([df, pd.DataFrame(sub_narr_enc, columns=sub_mlb.classes_)], axis=1)
     
-    return dom_mlb, sub_mlb, dom_narr_enc, sub_narr_enc, narr_df
+    return dom_mlb, sub_mlb, dom_narr_enc, sub_narr_enc, df
