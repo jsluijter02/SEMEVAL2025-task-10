@@ -2,6 +2,8 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 import pandas as pd
 from sklearn.preprocessing import MultiLabelBinarizer
 from deep_translator import GoogleTranslator
+from transformers import BertModel, BertTokenizer
+
 
 #raw text preprocessing steps
 def tf_idf_vectorize(X):
@@ -9,8 +11,11 @@ def tf_idf_vectorize(X):
     Xtf = vec.fit_transform(X)
     return Xtf
 
+# https://www.geeksforgeeks.org/how-to-generate-word-embedding-using-bert/
 def embed(X):
-    ...
+    tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+    model = BertModel.from_pretrained('bert-base-uncased')
+    encoding = tokenizer.batch_encode_plus(X,padding=True, truncation=False, return_tensors="pt", add_special_tokens=True) # truncation??
 
 def tokenizer(X):
     ...
