@@ -36,6 +36,30 @@ def load_text_data(directory:str, translate: bool = False, source_lang:str = "au
     df = pd.DataFrame(data)
     return df
 
+# 
+def translate_longer_file(file_path, source_lang: str = "auto"):
+    translated = []
+
+    # initialize the translator for if we need to translate
+    target_lang = "en"
+    translator = GoogleTranslator(source=source_lang, target=target_lang)
+
+    with open(file_path, "r") as f:
+        text = f.read()
+        piece = ""
+
+        for line in text:
+            if len(line)+len(piece) > 4500:
+                print(piece)
+                translated.append(translator.translate(piece))
+                piece = line
+            else:
+                piece += line
+        
+        translated.append(translator.translate(piece))
+    
+    return "".join(translated)
+
 # saves the narrative labels to dataframe. 
 # id = filename (string), 
 # dom_narr = list of narratives (list<string>), 
@@ -70,7 +94,7 @@ def load_explanation_data(file_path:str):
             explanation = tags[3]
 
             explanations.append({"id": text_id, "task_3_dom_narr": dom_narr, "task_3_sub_narr": sub_narr, "task_3_explanation": explanation})
-            print(explanation)
+            #print(explanation)
     
     df = pd.DataFrame(explanations)
     return df

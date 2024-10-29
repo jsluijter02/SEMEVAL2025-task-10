@@ -1,8 +1,7 @@
 from sklearn.feature_extraction.text import TfidfVectorizer
 import pandas as pd
 from sklearn.preprocessing import MultiLabelBinarizer
-from deep_translator import GoogleTranslator
-from transformers import BertModel, BertTokenizer
+#from transformers import BertModel, BertTokenizer # makes the import statement very slow
 
 
 #raw text preprocessing steps
@@ -13,10 +12,11 @@ def tf_idf_vectorize(X):
 
 # https://www.geeksforgeeks.org/how-to-generate-word-embedding-using-bert/
 def embed(X):
-    tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
-    model = BertModel.from_pretrained('bert-base-uncased')
-    encoding = tokenizer.batch_encode_plus(X,padding=True, truncation=False, return_tensors="pt", add_special_tokens=True) # truncation??
-
+    # tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+    # model = BertModel.from_pretrained('bert-base-uncased')
+    # encoding = tokenizer.batch_encode_plus(X,padding=True, truncation=False, return_tensors="pt", add_special_tokens=True) # truncation??
+    ...
+    
 def tokenizer(X):
     ...
     
@@ -32,4 +32,4 @@ def encode_labels(df):
     sub_narr_enc = sub_mlb.fit_transform(df["sub_narr"])
     df = pd.concat([df, pd.DataFrame(sub_narr_enc, columns=sub_mlb.classes_)], axis=1)
     
-    return dom_mlb, sub_mlb, dom_narr_enc, sub_narr_enc, df
+    return dom_mlb, sub_mlb, df
