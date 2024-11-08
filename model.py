@@ -6,7 +6,7 @@ import numpy as np
 
 # when training on sub categories, some simply do not have enough data in the 600 point dataset... so for now only train it on the dominant categories
 def logistic_regression_classifier(X_train, y_train, X_test):
-    lr = MultiOutputClassifier(LogisticRegression(class_weight="balanced", solver= "liblinear", max_iter=10000))
+    lr = MultiOutputClassifier(LogisticRegression(class_weight="balanced", solver= "liblinear", max_iter=100))
     lr.fit(X_train, y_train)
     
     y_pred = lr.predict(X_test)

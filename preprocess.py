@@ -4,6 +4,7 @@ from sklearn.preprocessing import MultiLabelBinarizer
 from sentence_transformers import SentenceTransformer
 from nltk.tokenize import sent_tokenize
 import numpy as np
+import torch.nn as nn
 
 
 #raw text preprocessing steps
@@ -12,14 +13,15 @@ def tf_idf_vectorize(X):
     Xtf = vec.fit_transform(X)
     return Xtf
 
-# 
+# thanks ruben voor idee convolution
 def embed_x(X, SBERTmodel: SentenceTransformer):
     sentences = sent_tokenize(X)
     embeddings = SBERTmodel.encode(sentences)
 
-    return embeddings
+    mean_pool_embedding = np.mean(embeddings, axis = 0)
+    #print(mean_pool_embedding)
+    return mean_pool_embedding
 
-    
     
 # label preprocessing steps
 # one-hot encodes the dominant- and sub-narrative labels              
