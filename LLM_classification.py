@@ -1,7 +1,12 @@
 # https://gist.github.com/daveebbelaar/d65f30bd539a9979d9976af80ec41f07 
-import numpy
+
 from enum import Enum
+import os
 import pickle
+from typing import List
+
+from openai import OpenAI
+from pydantic import BaseModel
 
 sub_mlb = ...
 with open("sub_mlb.pkl", "rb") as f:
@@ -13,6 +18,8 @@ class TextDomain(str, Enum):
 
 # classes generated as an enum by gpt 4o
 class CC_categories(str, Enum):
+    OTHER = "Other"
+
     # Amplifying Climate Fears
     CC_AMPLIFY_FEAR_EXISTING = "CC: Amplifying Climate Fears: Amplifying existing fears of global warming"
     CC_AMPLIFY_FEAR_DOOMSDAY = "CC: Amplifying Climate Fears: Doomsday scenarios for humans"
@@ -75,7 +82,6 @@ class CC_categories(str, Enum):
     CC_QUESTION_COMMUNITY_UNRELIABLE = "CC: Questioning the measurements and science: Scientific community is unreliable"
 
 class URW_categories(str, Enum):
-    # General
     OTHER = "Other"
     
     # Amplifying War-Related Fears
@@ -148,9 +154,37 @@ class URW_categories(str, Enum):
     WAR_OUTCOMES_UA_COLLAPSING = "URW: Speculating war outcomes: Ukrainian army is collapsing"
 
 # make general model using open AI api?
+api_key = os.environ.get("OPENAI_API_KEY")
+client = OpenAI(api_key=api_key)
+
+class GENERALMODEL(BaseModel):
+    narratives: List[CC_categories|URW_categories]
+
+# Prompt:
+classifier_prompt = """
+You are an AI model, tasked with the responsibility of classifying narratives in news articles. 
+The news articles are either about Climate Change, or the Ukraine Russia War. 
+You must find all relevant sub-narratives from the domain that are applicable to the news article.
+If none of the sub-narratives match, you must output "Other". 
+"""
+
+def GPT4o_mini_classifier(news_article:str):
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        response_format= GENERALMODEL,
+        messages=
+        [
+            {"role":"system", "content": classifier_prompt},
+            {"role":"user","content": news_article}
+        ]
+    )
+    return response
+
 
 # make model for CC classifications?
 
 # make model for URW classifications?
 
 # make model for dominant classes classifications?
+
+
