@@ -77,4 +77,6 @@ def logistic_regression_loocv(X, y, majority_ensemble = False, penalty ="l2", so
 
     return labels_pred, labels_true
     
+# # SVM model:
+# def SVM():
 
