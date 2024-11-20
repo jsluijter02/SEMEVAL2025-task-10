@@ -2,6 +2,13 @@ import os
 import pandas as pd
 from deep_translator import GoogleTranslator
 
+# class DataLoader():
+#     def __init__(self):
+#         self.directories = 
+#     def translate_file(source_lang):
+#      def load_data():
+#     def load_labels():
+
 # loads all text files from the directory into a single dataframe
 # id = file name (string)
 # text = files contents (string)

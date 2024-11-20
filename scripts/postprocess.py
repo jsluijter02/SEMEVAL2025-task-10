@@ -3,6 +3,9 @@ from datetime import datetime
 from sklearn.preprocessing import MultiLabelBinarizer
 import os
 
+class Postprocessor:
+    ...
+    
 def save_predictions(y_pred, sub_mlb, ids):
     # opens a new predictions file with the current date and time
     # change to f1 score later, so we can see which predictions are the best!!!

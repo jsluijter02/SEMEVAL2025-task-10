@@ -6,7 +6,9 @@ from nltk.tokenize import sent_tokenize
 import numpy as np
 import torch.nn as nn
 
-
+class Preprocessor:
+    ...
+    
 #raw text preprocessing steps
 def tf_idf_vectorize(X):
     vec = TfidfVectorizer()

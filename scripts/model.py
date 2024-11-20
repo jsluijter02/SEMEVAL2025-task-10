@@ -80,3 +80,5 @@ def logistic_regression_loocv(X, y, majority_ensemble = False, penalty ="l2", so
 # # SVM model:
 # def SVM():
 
+#def GPT4o_classifier():
+# get the eval but also need something to turn it into mlb 
