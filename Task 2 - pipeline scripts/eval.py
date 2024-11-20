@@ -25,3 +25,15 @@ class Evaluator:
     def exact_match_ratio(self):
         return np.all(self.y_pred == self.y_true, axis = 1).mean()
     
+    # function to run and have everything
+    # TODO: maybe eval function can save to a file? 
+    def eval(self, target_names) -> dict:
+        prf1 = self.precision_recall_f1(target_names)
+        hamming = self.hammingloss()
+        exactmatchratio = self.exact_match_ratio()
+
+        return {
+            "classification_report": prf1,
+            "hamming_loss": hamming,
+            "exact_match_ratio":exactmatchratio
+        }
