@@ -43,7 +43,7 @@ def load_text_data(directory:str, translate: bool = False, source_lang:str = "au
     df = pd.DataFrame(data)
     return df
 
-# 
+# this is dumb
 def translate_longer_file(file_path, source_lang: str = "auto"):
     translated = []
 
