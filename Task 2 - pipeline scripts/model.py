@@ -10,7 +10,7 @@ class LogisticRegression:
     attributes:
     - model: model stores the sklearn model object.
     """
-    def __init__(self, solver= "liblinear", class_weight="balanced", max_iter=100):
+    def __init__(self, solver= "liblinear", class_weight="balanced", max_iter=1000):
         from sklearn.linear_model import LogisticRegression
         from sklearn.multioutput import MultiOutputClassifier
         self.model = MultiOutputClassifier(LogisticRegression(solver=solver,class_weight=class_weight,max_iter=max_iter))
