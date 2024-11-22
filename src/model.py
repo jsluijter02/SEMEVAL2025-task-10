@@ -18,7 +18,6 @@ class LogisticRegression:
     def fit(self, X_train, y_train):
         self.model.fit(X_train, y_train)
     
-    # TODO: maybe return y_pred and y_true?
     def predict(self, X_test):
         return self.model.predict(X_test)
 

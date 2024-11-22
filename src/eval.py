@@ -27,13 +27,20 @@ class Evaluator:
     
     # function to run and have everything
     # TODO: maybe eval function can save to a file? 
-    def eval(self, target_names) -> dict:
-        prf1 = self.precision_recall_f1(target_names)
+    def eval(self) -> dict:
+        prf1 = self.prec_recall_f1()
         hamming = self.hammingloss()
         exactmatchratio = self.exact_match_ratio()
 
+        averages = {
+            "micro avg": prf1["micro avg"],
+            "macro avg": prf1["macro avg"],
+            "weighted avg": prf1["weighted avg"],
+            "samples avg": prf1["samples avg"]
+        }
+
         return {
-            "classification_report": prf1,
+            "classification_report": averages,
             "hamming_loss": hamming,
             "exact_match_ratio":exactmatchratio
         }
