@@ -3,8 +3,9 @@ from sklearn.preprocessing import MultiLabelBinarizer
 import os
 
 class Postprocessor:
-    def __init__(self, y_pred):
+    def __init__(self, y_pred, ids):
         self.y_pred = y_pred
+        self.ids = ids
     
     def save_predictions(self, sub_mlb, ids, model_name:str = "all"):
         # opens a new predictions file with the current date and time
