@@ -25,7 +25,7 @@ class Preprocessor:
     def __init__(self, data_directory:str = "../data/newdata.csv"):
         self.tf_idf = None
         self.embed = None
-        self.split = None 
+        self.__split = None 
         self.data_directory = data_directory
 
     # setting functions, these are recommended to use rather that setting the attributes manually...
@@ -35,9 +35,9 @@ class Preprocessor:
     def set_embedding_directory(self, directory:str = "../pkl_files/embeddings.pkl"):
         self.embed = directory
     
-    def set_test_split(self, split:float):
+    def split(self, split:float):
         if(split > 0 and split < 1):
-            self.split = split
+            self.__split = split
 
     # loading functions: these are called by the preprocess function. 
     def load_data(self):
@@ -62,7 +62,7 @@ class Preprocessor:
         return vec.fit_transform(df["text"])
     
     def split_data(self, X, y):
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=self.split, random_state=1)
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=self.__split, random_state=1)
         return {"train": X_train, "test": X_test}, {"train": y_train, "test": y_test} 
 
     # once all parameters are set, call the preprocess function to obtain the X and y needed for the model.
@@ -76,7 +76,7 @@ class Preprocessor:
         
         y = self.load_classes()
 
-        if self.split:
+        if self.__split:
             X, y = self.split_data(X, y)
 
         return X, y

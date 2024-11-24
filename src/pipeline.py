@@ -14,14 +14,20 @@ class Pipeline:
     def run(self):
         # load, clean and split? the data
         X, y = self.preprocessor.preprocess()
+        print("PREPROCESSED THE DATA")
         
         # if there is train data, train the model on the train data:
         if self.preprocessor.split:
             self.model.fit(X["train"], y["train"])
+            print("FIT THE DATA")
             # make a prediction:
+            print("MAKING PREDICTIONS")
             self.y_pred = self.model.predict(X["test"])
+            print("COMPLETED PREDICTIONS")
+            
             evaluator = Evaluator(self.y_pred, y["test"])
             self.evaluation = evaluator.eval()
+            print("COMPLETED EVAL")
         
         # if we only have test data, just make the prediction
         else:
