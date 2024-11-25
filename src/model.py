@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 
 from pydantic import BaseModel
 
+import utils
 
 class LogisticRegression:
     """
@@ -40,12 +41,15 @@ class GPT:
         self.system_prompt = system_prompt
         self.model = model
 
+    # fit function such that the pipe line does not break. 
+    # The GPT models aren't trained, so this is skipped.
     def fit(self, X, y):
-        pass
+        pass 
 
     def predict(self, X):
         texts = X
         responses = []
+        sub_mlb = utils.load_sub_mlb()
 
         for text in texts:
             response = self.client.beta.chat.completions.parse(
@@ -56,8 +60,13 @@ class GPT:
                     {"role":"user","content": text}
                 ]
             )
-            responses.append(response)
             
+            narrs = [narr.value for narr in response.choices[0].message.parsed.narratives]
+            print(narrs)
+            response = sub_mlb.transform([narrs])
+            print(response)
+            responses.append(response[0])
+        
         return responses
 
 # classes that define a reponse format for the GPT model, to save time, I generated the enum for these with gpt-4o

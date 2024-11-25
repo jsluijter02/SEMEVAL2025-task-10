@@ -3,6 +3,8 @@ import pandas as pd
 import pickle 
 import numpy as np 
 
+import utils
+
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import train_test_split
 
@@ -46,8 +48,7 @@ class Preprocessor:
     def load_classes(self):
         # TODO: should i split this up with a sub or dom label mode??
         df = self.load_data()
-        with open("../pkl_files/sub_mlb.pkl", "rb") as f:
-            sub_mlb = pickle.load(f)
+        sub_mlb = utils.load_sub_mlb()
         return df[sub_mlb.classes_].values
 
     def load_embeddings(self):
