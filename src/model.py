@@ -66,17 +66,29 @@ class GPT:
             responses.append(response[0])
         
         return responses
-    
-
-class LOOCV_LogisticRegression:
-    def __init__(self):
-        from sklearn.linear_model import LogisticRegression
-        from sklearn.multioutput import MultiOutputClassifier 
-    
-    #def fit(self, X_train)
 
 class GPT_ensemble:
-    pass
+    # a little sketch but i think this would work
+    def __init__(self, *args, **kwargs):
+        assert len(args) == len(kwargs)
+        self.prompts = []
+        self.model_names = []
+        self.GPTs = []
+
+        for prompt in args:
+            self.prompts.append(prompt)
+        for key,model in kwargs:
+            self.model_names.append(model)  
+        for i in range(len(self.prompts)):
+            self.GPTs.append(GPT(self.prompts[i], self.model_names[i]))
+
+    def fit(self, X, y):
+        pass
+
+    def predict(self, X_test):
+        for text in X_test:
+            ...
+        return ...
 
 
 # classes that define a reponse format for the GPT model, to save time, I generated the enum for these with gpt-4o
