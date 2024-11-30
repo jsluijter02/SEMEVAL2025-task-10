@@ -1,6 +1,8 @@
 from enum import Enum
 import os
 from typing import List
+
+import numpy as np
 from dotenv import load_dotenv
 
 from pydantic import BaseModel
@@ -68,17 +70,14 @@ class GPT:
         return responses
 
 class GPT_ensemble:
-    # a little sketch but i think this would work
-    def __init__(self, *args, **kwargs):
-        assert len(args) == len(kwargs)
-        self.prompts = []
-        self.model_names = []
+    def __init__(self, system_prompts:list[str], model_names:list[str], aggregation_method:str = "max"):
+        assert len(system_prompts) == len(model_names)
+
+        self.aggregation_method = aggregation_method
+        self.prompts = system_prompts
+        self.model_names = model_names
         self.GPTs = []
 
-        for prompt in args:
-            self.prompts.append(prompt)
-        for key,model in kwargs:
-            self.model_names.append(model)  
         for i in range(len(self.prompts)):
             self.GPTs.append(GPT(self.prompts[i], self.model_names[i]))
 
@@ -86,9 +85,18 @@ class GPT_ensemble:
         pass
 
     def predict(self, X_test):
-        for text in X_test:
-            ...
-        return ...
+        model_outputs = []
+        for GPT in self.GPTs:
+            model_outputs.append(GPT.predict(X_test))
+
+        # do some aggregation or avging or sumthing
+        if self.aggregation_method == "max":
+            model_outputs = np.any(model_outputs, axis = 0)
+
+        #sub_mlb = utils.load_sub_mlb()
+        #model_outputs = sub_mlb.transform(model_outputs)
+
+        return model_outputs
 
 
 # classes that define a reponse format for the GPT model, to save time, I generated the enum for these with gpt-4o
