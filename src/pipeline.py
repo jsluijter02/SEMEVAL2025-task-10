@@ -13,7 +13,7 @@ class Pipeline:
     # run performs a full step of the pipe line, it loads in the clean data the way the configuration wants it. 
     def run(self):
         # load, clean and split? the data
-        X, y = self.preprocessor.preprocess()
+        X, y, ids = self.preprocessor.preprocess()
         print("PREPROCESSED THE DATA")
         
         # if there is train data, train the model on the train data:
@@ -28,6 +28,9 @@ class Pipeline:
             evaluator = Evaluator(self.y_pred, y["test"])
             self.evaluation = evaluator.eval()
             print("COMPLETED EVAL")
+
+            postprocessor = Postprocessor(self.y_pred, ids["test"])
+            postprocessor.save_predictions(model_name=self.model.name)
         
         # if we only have test data, just make the prediction
         else:
@@ -35,8 +38,7 @@ class Pipeline:
 
         # TODO: figure out how to keep the frigging ids
         # # write out the predictions to an external file
-        # postprocessor = Postprocessor(self.y_pred)
-        # postprocessor.save_predictions()
+        
 
         
         

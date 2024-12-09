@@ -1,5 +1,6 @@
 from sklearn.metrics import classification_report, hamming_loss
 import numpy as np
+import pandas as pd
 
 # Evaluator class, to receive all relevant metrics from a set of true and predictor labels
 # https://mmuratarat.github.io/2020-01-25/multilabel_classification_metrics
@@ -31,14 +32,14 @@ class Evaluator:
         prf1 = self.prec_recall_f1()
         hamming = self.hammingloss()
         exactmatchratio = self.exact_match_ratio()
-
         averages = {
             "micro avg": prf1["micro avg"],
             "macro avg": prf1["macro avg"],
             "weighted avg": prf1["weighted avg"],
             "samples avg": prf1["samples avg"]
         }
-
+        avg_df = pd.DataFrame(averages).T
+        print(avg_df.head())
         return {
             "classification_report": averages,
             "hamming_loss": hamming,

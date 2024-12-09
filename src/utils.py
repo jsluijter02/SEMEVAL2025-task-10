@@ -21,3 +21,7 @@ def load_embeddings(directory:str="../pkl_files/embeddings.pkl"):
     with open(directory, "rb") as f:
         embeddings = pickle.load(f)
     return np.vstack(embeddings)
+
+def load_ids(directory:str = "../data/newdata.csv"):
+    df = load_data()
+    return df["id"]

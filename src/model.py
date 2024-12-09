@@ -1,13 +1,27 @@
 from enum import Enum
 import os
-from typing import List
-
+from typing import Counter, List
+from pydantic import BaseModel
+import pickle
 import numpy as np
 from dotenv import load_dotenv
-
-from pydantic import BaseModel
-
 import utils
+
+class MajorityClassifier:
+    def __init__(self):
+        self.majority = None
+
+        self.name = "MajorityClassifier"
+
+    # Find the most frequent label ("Other")
+    def fit(self,X,y):
+        y_tuples = [tuple(y_t) for y_t in y]
+        max_y = Counter(y_tuples).most_common(1)
+        self.majority = np.array(max_y[0][0])
+
+    def predict(self,X_test):
+        return np.tile(self.majority, (X_test.shape[0],1))
+        
 
 class LogisticRegression:
     """
@@ -21,10 +35,12 @@ class LogisticRegression:
     attributes:
     - model: model stores the sklearn model object.
     """
-    def __init__(self, solver= "liblinear", class_weight="balanced", max_iter=1000):
+    def __init__(self, solver= "liblinear", class_weight="balanced", max_iter=1000, **kwargs):
         from sklearn.linear_model import LogisticRegression
         from sklearn.multioutput import MultiOutputClassifier
-        self.model = MultiOutputClassifier(LogisticRegression(solver=solver,class_weight=class_weight,max_iter=max_iter))
+        self.model = MultiOutputClassifier(LogisticRegression(solver=solver,class_weight=class_weight,max_iter=max_iter, **kwargs))
+
+        self.name = "LogisticRegression"
     
     def fit(self, X_train, y_train):
         self.model.fit(X_train, y_train)
@@ -33,7 +49,27 @@ class LogisticRegression:
         return self.model.predict(X_test)
 
 class SVM:
-    ...
+    def __init__(self, **kwargs):
+        from sklearn.svm import SVC
+        from sklearn.multioutput import MultiOutputClassifier
+        self.model = MultiOutputClassifier(SVC(**kwargs))
+
+        self.name = "SVM"
+
+    def fit(self, X_train, y_train):
+        self.model.fit(X_train, y_train)
+
+    def predict(self, X_test):
+        return self.model.predict(X_test)
+    
+    def save(self, model_path = "../pkl_files/models/SVC.pkl"):
+        with open(model_path,"wb") as f:
+            pickle.dump(self.model,f)
+
+    def load(self, model_path = "../pkl_files/models/SVC.pkl"):
+        with open(model_path, "rb") as f:
+            self.model = pickle.load(f)
+
  
 class GPT:
     # https://gist.github.com/daveebbelaar/d65f30bd539a9979d9976af80ec41f07 
@@ -42,6 +78,8 @@ class GPT:
         self.client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
         self.system_prompt = system_prompt
         self.model = model
+
+        self.name = "GPT"
 
     # fit function such that the pipe line does not break. 
     # The GPT models aren't trained, so this is skipped.
@@ -92,9 +130,6 @@ class GPT_ensemble:
         # do some aggregation or avging or sumthing
         if self.aggregation_method == "max":
             model_outputs = np.any(model_outputs, axis = 0)
-
-        #sub_mlb = utils.load_sub_mlb()
-        #model_outputs = sub_mlb.transform(model_outputs)
 
         return model_outputs
 
