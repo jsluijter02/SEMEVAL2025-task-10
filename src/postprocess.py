@@ -16,7 +16,7 @@ class Postprocessor:
         narr_dict = self.narrative_dictionary()
         y_pred_dom, y_pred_sub = self.narr_predictions(narr_dict)
         
-        prediction_directory = os.path.join("./predictions",f"{model_name}")
+        prediction_directory = os.path.join("../predictions",f"{model_name}")
         file_path = os.path.join(prediction_directory,f"{date}.txt")
         os.makedirs(prediction_directory, exist_ok=True)
 
