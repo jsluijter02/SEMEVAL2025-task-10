@@ -1,5 +1,5 @@
 from preprocess import Preprocessor
-from eval import Evaluator
+from eval import Evaluator, ErrorAnalyzer
 from postprocess import Postprocessor
 import pickle
         
@@ -18,27 +18,28 @@ class Pipeline:
         
         # if there is train data, train the model on the train data:
         if self.preprocessor.split:
+            print("TRAINING THE MODEL")
             self.model.fit(X["train"], y["train"])
             print("FIT THE DATA")
-            # make a prediction:
-            print("MAKING PREDICTIONS")
-            self.y_pred = self.model.predict(X["test"])
-            print("COMPLETED PREDICTIONS")
             
-            evaluator = Evaluator(self.y_pred, y["test"])
-            self.evaluation = evaluator.eval()
-            print("COMPLETED EVAL")
-
-            postprocessor = Postprocessor(self.y_pred, ids["test"])
-            postprocessor.save_predictions(model_name=self.model.name)
         
-        # if we only have test data, just make the prediction
-        else:
-            self.y_pred = self.model.predict(X)
+        # make a prediction: (In the preprocessr)
+        print("MAKING PREDICTIONS")
+        self.y_pred = self.model.predict(X["test"])
+        print("COMPLETED PREDICTIONS")
 
-        # TODO: figure out how to keep the frigging ids
-        # # write out the predictions to an external file
+        # once we have the prediction, we want to evaluate how good the prediction is:  
+        evaluator = Evaluator(self.y_pred, y["test"])
+        self.evaluation = evaluator.eval()
+        print("COMPLETED EVAL")
+
+        # we also want to analyse for errors: what does the model mispredict?
+        error_analyzer = ErrorAnalyzer(y_pred=self.y_pred, y_true=y["test"])
+        error_analyzer.analyze()
         
+        # lastly, write out the predictions to an external file
+        postprocessor = Postprocessor(self.y_pred, ids["test"])
+        postprocessor.save_predictions(model_name=self.model.name)
 
         
         

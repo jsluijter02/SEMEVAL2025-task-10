@@ -91,6 +91,13 @@ class Preprocessor:
         # X = {X["train"], X["test"]}, y = {y["train"], y["test"]}, see split_data function.
         if self.__split:
             X, y, ids = self.split_data(X, y, ids)
+        
+        # If we don't split, all instances will be treated as "test" data. 
+        # This formal will ensure that the pipeline class knows how to handle this.
+        else: 
+            X = {"test": X}
+            y = {"test": y}
+            ids = {"test", ids}
 
         return X, y, ids
     

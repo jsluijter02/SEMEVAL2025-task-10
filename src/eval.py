@@ -2,6 +2,8 @@ from sklearn.metrics import classification_report, hamming_loss
 import numpy as np
 import pandas as pd
 
+import utils
+
 # Evaluator class, to receive all relevant metrics from a set of true and predictor labels
 # https://mmuratarat.github.io/2020-01-25/multilabel_classification_metrics
 class Evaluator:
@@ -45,3 +47,21 @@ class Evaluator:
             "hamming_loss": hamming,
             "exact_match_ratio":exactmatchratio
         }
+
+class ErrorAnalyzer:
+    def __init__(self, y_pred, y_true):
+        self.y_pred = y_pred
+        self.y_true = y_true
+        self.sub_mlb = utils.load_sub_mlb()
+
+    def all_zero_detect():
+        ...
+
+    def invalid_detector():
+        ...
+
+    def most_wrongly_predicted():
+        ...
+    
+    def analyze():
+        ...
