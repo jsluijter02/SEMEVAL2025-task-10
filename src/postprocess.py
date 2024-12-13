@@ -53,5 +53,5 @@ class Postprocessor:
                 dom = narr_dict[sub]
                 dom_list.append(dom)
             y_pred_dom.append(dom_list)
-        print(y_pred_dom)
+        print(y_pred_sub)
         return y_pred_dom, y_pred_sub

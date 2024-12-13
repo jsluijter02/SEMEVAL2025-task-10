@@ -16,7 +16,7 @@ def load_dom_mlb(directory:str="../pkl_files/dom_mlb.pkl"):
         dom_mlb = pickle.load(f)
     return dom_mlb
 
-def load_embeddings(directory:str="../pkl_files/embeddings.pkl"):
+def load_embeddings(directory:str="../pkl_files/embeddings.pkl", normalize: bool = False):
     embeddings = None
     with open(directory, "rb") as f:
         embeddings = pickle.load(f)

@@ -35,8 +35,8 @@ class Preprocessor:
     def tfidf(self, min_df = 1, max_df = 1.0, max_features = None):
         self.tf_idf = {"min_df": min_df, "max_df": max_df, "max_features": max_features}
     
-    def embed(self, directory:str = "../pkl_files/embeddings.pkl"):
-        self.embedding_directory = directory
+    def embed(self, directory:str = "../pkl_files/embeddings.pkl", normalized:bool = False):
+        self.embedding_directory = [directory, normalized]
     
     # set the test size proportion split.
     def split(self, split:float = 0.2):
@@ -75,7 +75,7 @@ class Preprocessor:
         # if we set an embedding directory, we can use the sentence transformer embeddings
         # TODO: once cleaning data is implemented, then maybe we can move this to the top, and only clean data for tf idf or raw text.
         elif self.embedding_directory:
-            X = utils.load_embeddings(self.embedding_directory)
+            X = utils.load_embeddings(self.embedding_directory[0], self.embedding_directory[1])
         
         # if we have not set any other parameters for X, then we pass X as the raw text
         else:
@@ -93,7 +93,7 @@ class Preprocessor:
             X, y, ids = self.split_data(X, y, ids)
         
         # If we don't split, all instances will be treated as "test" data. 
-        # This formal will ensure that the pipeline class knows how to handle this.
+        # This format ensures that the pipeline class knows how to handle this.
         else: 
             X = {"test": X}
             y = {"test": y}

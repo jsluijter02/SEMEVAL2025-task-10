@@ -34,7 +34,7 @@ class Pipeline:
         print("COMPLETED EVAL")
 
         # we also want to analyse for errors: what does the model mispredict?
-        error_analyzer = ErrorAnalyzer(y_pred=self.y_pred, y_true=y["test"])
+        error_analyzer = ErrorAnalyzer(y_pred=self.y_pred, y_true=y["test"], ids=ids["test"])
         error_analyzer.analyze()
         
         # lastly, write out the predictions to an external file
