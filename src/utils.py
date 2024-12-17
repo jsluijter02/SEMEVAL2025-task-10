@@ -16,11 +16,11 @@ def load_dom_mlb(directory:str="../pkl_files/dom_mlb.pkl"):
         dom_mlb = pickle.load(f)
     return dom_mlb
 
-def load_embeddings(directory:str="../pkl_files/embeddings.pkl", normalize: bool = False):
+def load_embeddings(directory:str="../pkl_files/embeddings.pkl", normalized:bool = "False"):
     embeddings = None
     with open(directory, "rb") as f:
         embeddings = pickle.load(f)
-    return np.vstack(embeddings)
+    return np.vstack(embeddings) # TODO: moet dit wel gevstacked worden? # TODO: normalized toevoegen
 
 def load_ids(directory:str = "../data/newdata.csv"):
     df = load_data()

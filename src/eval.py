@@ -57,11 +57,17 @@ class ErrorAnalyzer:
         self.__sub_mlb = utils.load_sub_mlb()
 
     # Detects empty predictions and returns a dictionary of their ids (key) and what their true predictions should have been (value)
+    # TODO: write this one out to an excel file as well.
     def all_zero_detect(self):
+        print(self.y_pred.shape)
+        print(self.y_true.shape)
+        print(self.ids.shape)
         empty_preds = {}
         for i, pred in enumerate(self.y_pred):
             if not np.any(pred):
-                empty_preds[self.ids[i]] = self.__sub_mlb.inverse_transform(self.y_true[i])
+                empty_preds[self.ids[i]] = self.__sub_mlb.inverse_transform([self.y_true[i]])
+
+        print(empty_preds)
         return empty_preds
             
 
@@ -69,27 +75,36 @@ class ErrorAnalyzer:
     def invalid_other(self):
         other_index = 45 # TODO: DONT MAKE THIS HARDCODED
         wrong_indices = [i for i,c in enumerate(self.y_pred) if c[other_index] == 1 and np.sum(c)>1]
-        df = pd.DataFrame({"y_pred": self.__sub_mlb.inverse_transform(self.y_pred[wrong_indices]), "y_true": self.__sub_mlb.inverse_transform(self.y_true[wrong_indices])}, index=self.ids.to_numpy()[wrong_indices])
-        df.to_excel("../wrong_predictions.xlsx")
+        wrong = pd.DataFrame({"y_pred": self.__sub_mlb.inverse_transform(self.y_pred[wrong_indices]), "y_true": self.__sub_mlb.inverse_transform(self.y_true[wrong_indices])}, index=self.ids.to_numpy()[wrong_indices])
+        wrong.to_excel("../erroranalysis/invalidOther.xlsx")
         # TODO: find out how to find the Other classes and the classes its adding to these predictions
-        return df
+        return wrong
     
-    #
+    # returns the predictions where both CC and URW classes were selected
+    # also writes these to an excel file
     def invalid_CC_URW(self):
-        # df = pd.DataFrame(self.y_pred,columns=self.__sub_mlb.classes_, index=self.ids)
-        # sub_URW_classes = [cls for cls in self.__sub_mlb.classes_ if cls[:3] == "URW"]
-        # sub_CC_classes = [cls for cls in self.__sub_mlb.classes_ if cls[:2] == "CC"]
+        df = pd.DataFrame(self.y_pred,columns=self.__sub_mlb.classes_, index=self.ids)
+        print(df)
+        sub_URW_classes = [cls for cls in self.__sub_mlb.classes_ if cls[:3] == "URW"]
+        sub_CC_classes = [cls for cls in self.__sub_mlb.classes_ if cls[:2] == "CC"]
         
-        # wrong = df.loc[df[sub_URW_classes].sum(axis=1) >=1 & df[sub_CC_classes].sum(axis=1) >= 1]
-        # wrong.to_clipboard()
-        # print(wrong)
-        ...
+        wrong = df.loc[(df[sub_URW_classes].sum(axis=1) >=1) & (df[sub_CC_classes].sum(axis=1) >= 1)]
+        wrong.to_excel("../erroranalysis/invalidCCURW.xlsx")
+        
+        return wrong
 
     # gives an overview of the classes that give the most fp and fn
     def most_wrongly_predicted(self):
         ... # TODO: find all fp's fn's in data and print which classes and the support of them
     
+    # how many classes does the model on average predict per label?
+    def avg_num_predictions(self):
+        ...
+    
     # Runs all algorithms
     def analyze(self):
-        #self.invalid_CC_URW()
+        self.all_zero_detect()
+        self.invalid_other()
+        self.invalid_CC_URW()
         ...
+
