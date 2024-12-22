@@ -3,8 +3,8 @@ import pandas as pd
 import pickle
 import numpy as np
 
-def load_data(directory:str = "../data/newdata.csv"):
-    return pd.read_csv(directory)
+def load_train_data(directory:str = "../data/train_data.pkl"):
+    return pd.read_pickle(directory)
 
 def load_sub_mlb(directory:str="../pkl_files/sub_mlb.pkl"):
     with open(directory, "rb") as f:

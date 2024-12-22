@@ -39,9 +39,8 @@ class Preprocessor:
         self.__embedding_directory = (directory, normalized)
     
     # set the test size proportion split.
-    def split(self, split:float = 0.2):
-        if(split > 0 and split < 1):
-            self.__split = split
+    def split(self, split:bool = True):
+        self.__split = split
 
     def load_classes(self, df:pd.DataFrame):
         # TODO: should i split this up with a sub or dom label mode??

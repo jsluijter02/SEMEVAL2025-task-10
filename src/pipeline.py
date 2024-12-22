@@ -8,7 +8,6 @@ class Pipeline:
     def __init__(self, preprocessor: Preprocessor, model): #, postprocessor: Postprocessor
         self.preprocessor = preprocessor
         self.model = model # either pass one of the model classes or load from a pkl file for the devset predictions
-        #self.postprocessor = postprocessor
     
     # run performs a full step of the pipe line, it loads in the clean data the way the configuration wants it. 
     def run(self):
@@ -34,8 +33,8 @@ class Pipeline:
         print("COMPLETED EVAL")
 
         # we also want to analyse for errors: what does the model mispredict?
-        error_analyzer = ErrorAnalyzer(y_pred=self.y_pred, y_true=y["test"], ids=ids["test"])
-        error_analyzer.analyze()
+        self.error_analyzer = ErrorAnalyzer(y_pred=self.y_pred, y_true=y["test"], ids=ids["test"])
+        self.error_analyzer.analyze()
         
         # lastly, write out the predictions to an external file
         postprocessor = Postprocessor(self.y_pred, ids["test"])

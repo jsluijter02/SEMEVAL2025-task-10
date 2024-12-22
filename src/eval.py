@@ -1,6 +1,8 @@
-from sklearn.metrics import classification_report, hamming_loss
+from sklearn.metrics import multilabel_confusion_matrix, classification_report, hamming_loss, ConfusionMatrixDisplay
 import numpy as np
 import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
 from sklearn.preprocessing import MultiLabelBinarizer
 
 import utils
@@ -35,6 +37,9 @@ class Evaluator:
         prf1 = self.prec_recall_f1()
         hamming = self.hammingloss()
         exactmatchratio = self.exact_match_ratio()
+        confusion = multilabel_confusion_matrix(self.y_true, self.y_pred)
+        print(confusion)
+        
         averages = {
             "micro avg": prf1["micro avg"],
             "macro avg": prf1["macro avg"],
@@ -95,7 +100,19 @@ class ErrorAnalyzer:
 
     # gives an overview of the classes that give the most fp and fn
     def most_wrongly_predicted(self):
-        ... # TODO: find all fp's fn's in data and print which classes and the support of them
+        # TODO: find all fp's fn's in data and print which classes and the support of them
+        # I also want to see what classes were predicted the most instead of these
+        cfm = multilabel_confusion_matrix(self.y_true, self.y_pred)
+        fig, ax = plt.subplots(19,5,figsize=(5*2,19*2))
+        ax = ax.flatten()
+        for i,cm in enumerate(cfm):
+            disp = ConfusionMatrixDisplay(cm)
+            disp.plot(ax=ax[i])
+            ax[i].title = str(self.__sub_mlb.classes_)
+        print(cfm)
+        fps = ...
+        fns = ...
+
     
     # how many classes does the model on average predict per label?
     def avg_num_predictions(self):
@@ -103,8 +120,13 @@ class ErrorAnalyzer:
     
     # Runs all algorithms
     def analyze(self):
-        self.all_zero_detect()
-        self.invalid_other()
-        self.invalid_CC_URW()
+        #self.all_zero_detect()
+        #self.invalid_other()
+        #self.invalid_CC_URW()
+        self.most_wrongly_predicted()
         ...
 
+if __name__ == "__main__":
+    y_p = np.load("./predictions.npz")["y_pred"]
+    y_t = np.load("./predictions.npz")["y_true"]
+    err = ErrorAnalyzer(y_true=y_t,y_pred=y_p, ids = None)
