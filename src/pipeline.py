@@ -5,7 +5,7 @@ import pickle
         
 class Pipeline:
     # initialize the pipeline with a preprocessor, model and a postprocessor
-    def __init__(self, preprocessor: Preprocessor, model): #, postprocessor: Postprocessor
+    def __init__(self, preprocessor: Preprocessor, model):
         self.preprocessor = preprocessor
         self.model = model # either pass one of the model classes or load from a pkl file for the devset predictions
     
@@ -22,7 +22,7 @@ class Pipeline:
             print("FIT THE DATA")
             
         
-        # make a prediction: (In the preprocessr)
+        # make a prediction
         print("MAKING PREDICTIONS")
         self.y_pred = self.model.predict(X["test"])
         print("COMPLETED PREDICTIONS")

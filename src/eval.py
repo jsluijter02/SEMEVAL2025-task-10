@@ -1,3 +1,4 @@
+import os
 from sklearn.metrics import multilabel_confusion_matrix, classification_report, hamming_loss, ConfusionMatrixDisplay
 import numpy as np
 import pandas as pd
@@ -70,7 +71,7 @@ class ErrorAnalyzer:
         empty_preds = {}
         for i, pred in enumerate(self.y_pred):
             if not np.any(pred):
-                empty_preds[self.ids[i]] = self.__sub_mlb.inverse_transform([self.y_true[i]])
+                empty_preds[self.ids.to_numpy()[i]] = self.__sub_mlb.inverse_transform(np.array([self.y_true[i]]))
 
         print(empty_preds)
         return empty_preds
@@ -78,6 +79,7 @@ class ErrorAnalyzer:
 
     # returns the invalid predictions, so Other and another class
     def invalid_other(self):
+        os.makedirs("../erroranalysis", exist_ok=True)
         other_index = 45 # TODO: DONT MAKE THIS HARDCODED
         wrong_indices = [i for i,c in enumerate(self.y_pred) if c[other_index] == 1 and np.sum(c)>1]
         wrong = pd.DataFrame({"y_pred": self.__sub_mlb.inverse_transform(self.y_pred[wrong_indices]), "y_true": self.__sub_mlb.inverse_transform(self.y_true[wrong_indices])}, index=self.ids.to_numpy()[wrong_indices])
@@ -88,6 +90,7 @@ class ErrorAnalyzer:
     # returns the predictions where both CC and URW classes were selected
     # also writes these to an excel file
     def invalid_CC_URW(self):
+        os.makedirs("../erroranalysis", exist_ok=True)
         df = pd.DataFrame(self.y_pred,columns=self.__sub_mlb.classes_, index=self.ids)
         print(df)
         sub_URW_classes = [cls for cls in self.__sub_mlb.classes_ if cls[:3] == "URW"]
@@ -99,19 +102,19 @@ class ErrorAnalyzer:
         return wrong
 
     # gives an overview of the classes that give the most fp and fn
-    def most_wrongly_predicted(self):
-        # TODO: find all fp's fn's in data and print which classes and the support of them
-        # I also want to see what classes were predicted the most instead of these
-        cfm = multilabel_confusion_matrix(self.y_true, self.y_pred)
-        fig, ax = plt.subplots(19,5,figsize=(5*2,19*2))
-        ax = ax.flatten()
-        for i,cm in enumerate(cfm):
-            disp = ConfusionMatrixDisplay(cm)
-            disp.plot(ax=ax[i])
-            ax[i].title = str(self.__sub_mlb.classes_)
-        print(cfm)
-        fps = ...
-        fns = ...
+    # def most_wrongly_predicted(self):
+    #     # TODO: find all fp's fn's in data and print which classes and the support of them
+    #     # I also want to see what classes were predicted the most instead of these
+    #     cfm = multilabel_confusion_matrix(self.y_true, self.y_pred)
+    #     # fig, ax = plt.subplots(19,5,figsize=(5*2,19*2))
+    #     # ax = ax.flatten()
+    #     # for i,cm in enumerate(cfm):
+    #     #     disp = ConfusionMatrixDisplay(cm)
+    #     #     disp.plot(ax=ax[i])
+    #     #     ax[i].title = str(self.__sub_mlb.classes_)
+    #     # print(cfm)
+    #     fps = ...
+    #     fns = ...
 
     
     # how many classes does the model on average predict per label?
@@ -120,10 +123,10 @@ class ErrorAnalyzer:
     
     # Runs all algorithms
     def analyze(self):
-        #self.all_zero_detect()
-        #self.invalid_other()
-        #self.invalid_CC_URW()
-        self.most_wrongly_predicted()
+        self.all_zero_detect()
+        self.invalid_other()
+        self.invalid_CC_URW()
+        # self.most_wrongly_predicted()
         ...
 
 if __name__ == "__main__":

@@ -24,11 +24,10 @@ class Preprocessor:
     - split_test_size: a float, indicating the proportion of the test set. If set, the preprocess function will split the data into train and test set.
     - __data_directory: directory to the dataset
     """
-    def __init__(self, data_directory:str = "../data/newdata.csv"):
+    def __init__(self):
         self.tf_idf = None
         self.__embedding_directory = None
         self.__split = None 
-        self.__data_directory = data_directory
         self.vectorizer = None
 
     # setting functions, these are recommended to use rather that setting the attributes manually...
@@ -38,7 +37,7 @@ class Preprocessor:
     def embed(self, directory:str = "../pkl_files/embeddings.pkl", normalized:bool = False):
         self.__embedding_directory = (directory, normalized)
     
-    # set the test size proportion split.
+    # Do we want to use the split?
     def split(self, split:bool = True):
         self.__split = split
 
@@ -47,14 +46,6 @@ class Preprocessor:
         sub_mlb = utils.load_sub_mlb()
         return df[sub_mlb.classes_].values
     
-    def tfidf_vectorize(self, df:pd.DataFrame):
-        vec = TfidfVectorizer(min_df=self.tf_idf["min_df"], max_df=self.tf_idf["max_df"], max_features=self.tf_idf["max_features"])
-        self.vectorizer = vec
-        return vec.fit_transform(df["text"])
-    
-    def split_data(self, X, y, ids): # TODO: Train test split files
-        X_train, X_test, y_train, y_test, ids_train, ids_test = train_test_split(X, y, ids, test_size=self.__split, random_state=1)
-        return {"train": X_train, "test": X_test}, {"train": y_train, "test": y_test}, {"train": ids_train, "test": ids_test}
 
     # preprocess function: general function that will load the data, preprocess the data (tf-idf vectorize/embed, 
     # depending on which of these parameters were set with the set functions) it loads this into X. 
@@ -65,11 +56,15 @@ class Preprocessor:
 
     def preprocess(self):
         # load in the data set
-        df = utils.load_data(self.__data_directory)
+        data = utils.load_data()
+        train_data = data["train"]
+        test_data = data["test"]
         
         # if we have set tf_idf parameters, then we can define X as a set of tf idf vectors.
         if self.tf_idf:
-            X = self.tfidf_vectorize(df)
+            vec = TfidfVectorizer(min_df=self.tf_idf["min_df"], max_df=self.tf_idf["max_df"], max_features=self.tf_idf["max_features"])
+            self.vectorizer = vec
+            X = {"train": vec.fit_transform(train_data["translated_text"]), "test": vec.transform(test_data["translated_text"])}
         
         # if we set an embedding directory, we can use the sentence transformer embeddings
         # TODO: once cleaning data is implemented, then maybe we can move this to the top, and only clean data for tf idf or raw text.
@@ -78,25 +73,13 @@ class Preprocessor:
         
         # if we have not set any other parameters for X, then we pass X as the raw text
         else:
-            X = df["text"]
+            X = {"train": train_data["translated_text"], "test": test_data["translated_text"]}
         
         # classes are always the sub classes, so load those for y
-        y = self.load_classes(df)
+        y = {"train": self.load_classes(train_data), "test": self.load_classes(test_data)}
 
         # load the text file identifiers
-        ids = utils.load_ids(self.__data_directory)
-
-        # finally, if we have set a split parameter for test size, split X and y. 
-        # X = {X["train"], X["test"]}, y = {y["train"], y["test"]}, see split_data function.
-        if self.__split:
-            X, y, ids = self.split_data(X, y, ids)
+        ids = utils.load_ids()
         
-        # If we don't split, all instances will be treated as "test" data. 
-        # This format ensures that the pipeline class knows how to handle this.
-        else: 
-            X = {"test": X}
-            y = {"test": y}
-            ids = {"test": ids}
-
         return X, y, ids
     
